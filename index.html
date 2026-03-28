@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DarEnglish – Darija to English</title>
+<meta name="description" content="Translate Moroccan Darija to English with AI-powered explanations, examples, and pronunciation tips.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0d0a;
+    --surface: #1a1612;
+    --surface2: #221e18;
+    --border: #2e2820;
+    --terracotta: #c4603a;
+    --gold: #d4a842;
+    --cream: #f5ead8;
+    --muted: #7a6f63;
+    --text: #f0e6d3;
+    --text-dim: #b8a99a;
+    --green: #6db88a;
+    --blue: #7fa8d8;
+    --red: #e07a5a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(212,168,66,0.025) 40px, rgba(212,168,66,0.025) 41px),
+      repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(196,96,58,0.018) 40px, rgba(196,96,58,0.018) 41px);
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+    position: relative; z-index: 1;
+  }
+
+  /* HEADER */
+  header { padding: 52px 0 32px; text-align: center; }
+
+  .ornament { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 14px; }
+  .orn-line { width: 52px; height: 1px; }
+  .orn-line.l { background: linear-gradient(to right, transparent, var(--gold)); }
+  .orn-line.r { background: linear-gradient(to left, transparent, var(--gold)); }
+  .orn-gem { width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); opacity: 0.8; }
+
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem, 7vw, 3.6rem); font-weight: 700; color: var(--cream); line-height: 1; letter-spacing: -0.5px; }
+  h1 em { font-style: normal; color: var(--terracotta); }
+  .tagline { margin-top: 9px; font-size: 0.78rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--terracotta), var(--gold), var(--terracotta));
+  }
+
+  /* API KEY SCREEN */
+  #apiScreen { padding: 32px 28px; margin-top: 12px; }
+
+  .api-intro { margin-bottom: 24px; }
+  .api-intro h2 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--cream); margin-bottom: 10px; }
+  .api-intro p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
+
+  .steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+  .step { display: flex; gap: 14px; align-items: flex-start; }
+  .step-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: rgba(212,168,66,0.12); border: 1px solid rgba(212,168,66,0.25);
+    color: var(--gold); font-size: 0.75rem; font-weight: 500;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-text { font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; }
+  .step-text a { color: var(--gold); text-decoration: none; }
+  .step-text a:hover { text-decoration: underline; }
+
+  .api-field-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; display: block; }
+
+  .api-input-row { display: flex; gap: 8px; }
+
+  input[type="password"], input[type="text"] {
+    flex: 1;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    padding: 11px 14px; outline: none; transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--gold); }
+  input::placeholder { color: var(--muted); }
+
+  .btn {
+    border: none; border-radius: 10px; padding: 11px 20px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.03em;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--terracotta), #a84e2c); color: var(--cream); }
+  .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(196,96,58,0.3); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-ghost { background: none; border: 1px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .api-error { font-size: 0.82rem; color: var(--red); margin-top: 8px; display: none; }
+  .api-error.show { display: block; }
+
+  /* MAIN APP */
+  #appScreen { display: none; }
+
+  .api-badge {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 8px; margin-top: 10px; margin-bottom: 16px;
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .badge-text { font-size: 0.75rem; color: var(--muted); }
+  .badge-change { background: none; border: none; font-size: 0.72rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
+  .badge-change:hover { color: var(--terracotta); }
+
+  .input-card { padding: 24px; }
+  .field-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; display: block; }
+  .input-row { display: flex; gap: 8px; align-items: flex-end; }
+
+  textarea {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); font-family: 'Amiri', serif; font-size: 1.2rem;
+    padding: 12px 14px; resize: none; outline: none; transition: border-color 0.2s;
+    line-height: 1.5; min-height: 60px;
+  }
+  textarea:focus { border-color: var(--gold); }
+  textarea::placeholder { color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.93rem; }
+
+  .dots span { animation: blink 1.2s infinite; display: inline-block; }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:.15} 40%{opacity:1} }
+
+  .err-msg { background: rgba(196,96,58,0.1); border: 1px solid rgba(196,96,58,0.22); border-radius: 10px; padding: 12px 15px; color: var(--red); font-size: 0.86rem; margin-top: 12px; display: none; }
+  .err-msg.show { display: block; }
+
+  /* RESULT */
+  .result-card { margin-top: 16px; display: none; animation: rise 0.35s ease; }
+  .result-card.show { display: block; }
+  @keyframes rise { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+  .result-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 20px; border-bottom: 1px solid var(--border);
+    background: var(--surface2); gap: 10px;
+  }
+  .r-phrase { font-family: 'Amiri', serif; font-size: 1.05rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .btn-save { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); padding: 4px 12px; font-size: 0.73rem; cursor: pointer; font-family: 'DM Sans', sans-serif; letter-spacing: 0.05em; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+  .btn-save:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-save.on { border-color: var(--gold); color: var(--gold); background: rgba(212,168,66,0.08); }
+
+  .result-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 18px; }
+  .rsection { display: flex; flex-direction: column; gap: 7px; }
+  .tag { display: inline-flex; align-items: center; font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 500; padding: 2px 9px; border-radius: 100px; width: fit-content; }
+  .tag-t { background: rgba(196,96,58,0.15); color: var(--terracotta); }
+  .tag-e { background: rgba(212,168,66,0.12); color: var(--gold); }
+  .tag-x { background: rgba(109,184,138,0.12); color: var(--green); }
+  .tag-p { background: rgba(127,168,216,0.12); color: var(--blue); }
+
+  .big { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; color: var(--cream); line-height: 1.3; }
+  .body-t { font-size: 0.9rem; color: var(--text-dim); line-height: 1.75; }
+  .ex-list { display: flex; flex-direction: column; gap: 6px; }
+  .ex-item { background: var(--surface2); border-left: 2px solid var(--green); padding: 8px 12px; border-radius: 0 7px 7px 0; font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; }
+  .tips-box { font-size: 0.88rem; color: var(--text-dim); line-height: 1.75; background: rgba(127,168,216,0.05); border: 1px solid rgba(127,168,216,0.12); border-radius: 8px; padding: 10px 13px; }
+  .sep { height: 1px; background: var(--border); }
+
+  /* SAVED */
+  .saved-wrap { margin-top: 28px; display: none; }
+  .saved-wrap.show { display: block; }
+  .saved-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .saved-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--cream); }
+  .btn-clearall { background: none; border: none; color: var(--muted); font-size: 0.74rem; cursor: pointer; transition: color 0.2s; }
+  .btn-clearall:hover { color: var(--terracotta); }
+  .saved-grid { display: flex; flex-direction: column; gap: 7px; }
+  .saved-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 11px 15px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: border-color 0.2s; gap: 8px; }
+  .saved-item:hover { border-color: var(--gold); }
+  .si-txt { flex: 1; min-width: 0; }
+  .si-d { font-family: 'Amiri', serif; font-size: 1rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .si-e { font-size: 0.78rem; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .btn-rm { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.9rem; padding: 3px; transition: color 0.2s; flex-shrink: 0; }
+  .btn-rm:hover { color: var(--terracotta); }
+
+  footer { text-align: center; padding-top: 52px; color: var(--muted); font-size: 0.74rem; letter-spacing: 0.05em; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 480px) {
+    .input-row { flex-direction: column; }
+    .btn { width: 100%; }
+    .api-input-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="ornament">
+      <div class="orn-line l"></div>
+      <div class="orn-gem"></div>
+      <div class="orn-line r"></div>
+    </div>
+    <h1>Dar<em>English</em></h1>
+    <p class="tagline">Darija · English · بالدارجة</p>
+  </header>
+
+  <!-- API KEY SCREEN -->
+  <div class="card" id="apiScreen">
+    <div class="api-intro">
+      <h2>Welcome! Let's get you set up.</h2>
+      <p>DarEnglish uses AI to translate Darija. You'll need a free Anthropic API key — it takes 2 minutes to get and gives you hundreds of free translations.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Go to <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> and create a free account.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Once logged in, click <strong>API Keys</strong> in the left menu, then click <strong>Create Key</strong>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Copy the key (it starts with <code style="background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:4px;font-size:0.85em;">sk-ant-</code>) and paste it below.</div>
+      </div>
+    </div>
+
+    <span class="api-field-label">Your API Key</span>
+    <div class="api-input-row">
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." />
+      <button class="btn btn-primary" onclick="saveKey()">Start Translating</button>
+    </div>
+    <div class="api-error" id="apiError">That doesn't look like a valid key. It should start with sk-ant-</div>
+    <p style="font-size:0.76rem;color:var(--muted);margin-top:10px;">Your key is stored only in your browser — it never leaves your device.</p>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="appScreen">
+
+    <div class="api-badge">
+      <div class="badge-dot"></div>
+      <span class="badge-text">API key active</span>
+      <button class="badge-change" onclick="changeKey()">change</button>
+    </div>
+
+    <div class="card input-card">
+      <span class="field-label">Type your Darija phrase</span>
+      <div class="input-row">
+        <textarea id="inp" placeholder="e.g. كيف داير؟  or  fin ghadi?" rows="2"></textarea>
+        <button class="btn btn-primary" id="transBtn" onclick="doTranslate()">Translate</button>
+      </div>
+    </div>
+
+    <div class="err-msg" id="errMsg"></div>
+
+    <div class="card result-card" id="resultCard">
+      <div class="result-top">
+        <span class="r-phrase" id="rPhrase"></span>
+        <button class="btn-save" id="saveBtn" onclick="toggleSave()">☆ Save</button>
+      </div>
+      <div class="result-body">
+        <div class="rsection">
+          <div class="tag tag-t">✦ Translation</div>
+          <div class="big" id="rTranslation"></div>
+        </div>
+        <div class="sep"></div>
+        <div class="rsection">
+          <div class="tag tag-e">◈ Explanation</div>
+          <div class="body-t" id="rExplanation"></div>
+        </div>
+        <div class="sep"></div>
+        <div class="rsection">
+          <div class="tag tag-x">◉ Examples</div>
+          <div class="ex-list" id="rExamples"></div>
+        </div>
+        <div class="sep"></div>
+        <div class="rsection">
+          <div class="tag tag-p">◎ Pronunciation & Tips</div>
+          <div class="tips-box" id="rTips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="saved-wrap" id="savedWrap">
+      <div class="saved-head">
+        <span class="saved-title">Saved Phrases</span>
+        <button class="btn-clearall" onclick="clearAll()">Clear all</button>
+      </div>
+      <div class="saved-grid" id="savedGrid"></div>
+    </div>
+
+  </div><!-- /appScreen -->
+
+  <footer>
+    Built for the Moroccan community · <a href="https://github.com/darenglish-app" target="_blank">GitHub</a>
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+  let current = null;
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem('dar_saved') || '[]'); } catch(e){}
+
+  // Init: check for saved key
+  const storedKey = localStorage.getItem('dar_apikey');
+  if (storedKey) {
+    document.getElementById('apiScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'block';
+    renderSaved();
+  }
+
+  function saveKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    const err = document.getElementById('apiError');
+    if (!key.startsWith('sk-ant-')) {
+      err.classList.add('show'); return;
+    }
+    err.classList.remove('show');
+    localStorage.setItem('dar_apikey', key);
+    document.getElementById('apiScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'block';
+    renderSaved();
+  }
+
+  function changeKey() {
+    localStorage.removeItem('dar_apikey');
+    document.getElementById('apiKeyInput').value = '';
+    document.getElementById('apiScreen').style.display = 'block';
+    document.getElementById('appScreen').style.display = 'none';
+  }
+
+  async function doTranslate() {
+    const phrase = document.getElementById('inp').value.trim();
+    if (!phrase) return;
+    const apiKey = localStorage.getItem('dar_apikey');
+    const btn = document.getElementById('transBtn');
+    const err = document.getElementById('errMsg');
+    const card = document.getElementById('resultCard');
+
+    btn.innerHTML = '<span class="dots"><span>•</span><span>•</span><span>•</span></span>';
+    btn.disabled = true;
+    err.classList.remove('show');
+    card.classList.remove('show');
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 800,
+          system: 'You are DarEnglish, an expert in Moroccan Darija and English. Respond ONLY with valid JSON, no markdown, no extra text. Schema: {"translation":"natural English","explanation":"2-3 sentences on words/grammar/culture","examples":["sentence 1","sentence 2","sentence 3"],"tips":"1-2 sentences on pronunciation or usage"}',
+          messages: [{ role: 'user', content: phrase }]
+        })
+      });
+      if (!res.ok) throw new Error('API error ' + res.status);
+      const data = await res.json();
+      const raw = data.content.map(b => b.text||'').join('').replace(/```json|```/g,'').trim();
+      const parsed = JSON.parse(raw);
+      current = { phrase, ...parsed };
+      showResult(phrase, parsed);
+    } catch(e) {
+      err.textContent = 'Translation failed: ' + e.message + '. Check your API key or try again.';
+      err.classList.add('show');
+    }
+    btn.innerHTML = 'Translate';
+    btn.disabled = false;
+  }
+
+  function showResult(phrase, r) {
+    document.getElementById('rPhrase').textContent = phrase;
+    document.getElementById('rTranslation').textContent = r.translation;
+    document.getElementById('rExplanation').textContent = r.explanation;
+    document.getElementById('rTips').textContent = r.tips;
+    const ex = document.getElementById('rExamples');
+    ex.innerHTML = '';
+    (r.examples||[]).forEach(s => {
+      const d = document.createElement('div');
+      d.className = 'ex-item'; d.textContent = s; ex.appendChild(d);
+    });
+    const isSaved = saved.some(p => p.phrase === phrase);
+    const sb = document.getElementById('saveBtn');
+    sb.textContent = isSaved ? '★ Saved' : '☆ Save';
+    sb.className = 'btn-save' + (isSaved ? ' on' : '');
+    const card = document.getElementById('resultCard');
+    card.classList.remove('show'); void card.offsetWidth; card.classList.add('show');
+  }
+
+  function toggleSave() {
+    if (!current) return;
+    const idx = saved.findIndex(p => p.phrase === current.phrase);
+    if (idx >= 0) saved.splice(idx, 1);
+    else saved.unshift({ phrase: current.phrase, translation: current.translation });
+    try { localStorage.setItem('dar_saved', JSON.stringify(saved)); } catch(e){}
+    renderSaved(); showResult(current.phrase, current);
+  }
+
+  function renderSaved() {
+    const wrap = document.getElementById('savedWrap');
+    const grid = document.getElementById('savedGrid');
+    if (!saved.length) { wrap.classList.remove('show'); return; }
+    wrap.classList.add('show'); grid.innerHTML = '';
+    saved.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'saved-item';
+      div.innerHTML = '<div class="si-txt"><div class="si-d">'+esc(p.phrase)+'</div><div class="si-e">'+esc(p.translation)+'</div></div><button class="btn-rm" onclick="removeSaved('+i+',event)">✕</button>';
+      div.addEventListener('click', () => { document.getElementById('inp').value = p.phrase; doTranslate(); window.scrollTo({top:0,behavior:'smooth'}); });
+      grid.appendChild(div);
+    });
+  }
+
+  function removeSaved(i, e) {
+    e.stopPropagation(); saved.splice(i,1);
+    try { localStorage.setItem('dar_saved', JSON.stringify(saved)); } catch(e){}
+    renderSaved();
+  }
+  function clearAll() {
+    saved = [];
+    try { localStorage.setItem('dar_saved', JSON.stringify(saved)); } catch(e){}
+    renderSaved();
+  }
+  function esc(t) { return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'inp') {
+      e.preventDefault(); doTranslate();
+    }
+    if (e.key === 'Enter' && document.activeElement.id === 'apiKeyInput') {
+      saveKey();
+    }
+  });
+</script>
+</body>
+</html>
